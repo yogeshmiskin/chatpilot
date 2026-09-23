@@ -1,0 +1,10 @@
+{
+  "name": "chatpilot-ai-conversation-studio",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file=.env src/server.js",
+    "dev": "node --env-file=.env --watch src/server.js"
+  }
+}
