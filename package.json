@@ -1,7 +1,13 @@
 {
-  "name": "instagram-ai-chatbot-mvp",
-  "version": "1.0.0",
+  "name": "chatpilot-multuser",
+  "version": "4.0.0",
   "private": true,
   "type": "module",
-  "scripts": { "start": "node src/server.js", "dev": "node --watch src/server.js" }
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env --watch src/server.js",
+    "start": "node --env-file-if-exists=.env src/server.js"
+  }
 }

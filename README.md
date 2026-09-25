@@ -1,53 +1,55 @@
-# Instagram AI Chatbot MVP — zero dependency
+# ChatPilot — Multi-user Conversation Studio
 
-This version is intentionally dependency-free. It uses Node's built-in HTTP server and `fetch`, so there is no `npm install` step.
+Local/Render-ready Node app with private user accounts, per-user conversations, mobile-first UI, and Gemini-powered message generation.
 
-## 1) Run it on Windows
+## Core behavior
+- Email + password accounts.
+- Each user's conversations, messages, settings and uploaded files are isolated by user ID.
+- Auto reply is OFF. AI only generates suggestions; the user chooses what to send/save.
+- No Meta/Instagram webhook is included.
+- Mobile UI uses compact bottom navigation and an option sheet while desktop keeps the full side panels.
+- Supports text and file/image attachments up to 8 MB.
+- Gemini API key stays server-side via environment variables.
 
-1. Extract this folder.
-2. Copy `.env.example` to `.env`.
-3. Put in your Instagram access token and Instagram account ID when you have them. Put your OpenAI API key in `OPENAI_API_KEY` if you want AI replies.
-4. Open PowerShell in this folder and run:
+## AI message studio
+- **Generate Reply**: uses the latest conversation context.
+- **Generate Message**: turns a plain-language intention such as `bolna hai: chalo bahar chalte hain` into one polished, ready-to-send message.
+- **Regenerate**: creates a fresh variation while keeping the same intent.
+- Per-chat AI style prompt is combined with the built-in ChatPilot behavior: context-aware, direct, natural Hindi/Hinglish/English, practical solutions, fresh wording, and no manipulative pressure.
 
-```powershell
-node --version
-npm run dev
-```
+## Environment
+Set:
+- `GEMINI_API_KEY`
+- `GEMINI_MODEL`
 
+Render should use `npm start`. The package start script uses `--env-file-if-exists=.env`, so local `.env` works when present while Render can use dashboard environment variables without a `.env` file.
+
+## Run
+`npm install`
+`npm run dev`
 Open `http://localhost:4000`.
 
-## 2) Instagram API
+## Chat naming
 
-For the current Instagram API with Instagram Login, Meta's documentation says the setup is for professional Instagram accounts (Business/Creator) and uses `instagram_business_manage_messages` for messaging. Meta's current Send API examples use:
+Each conversation has an editable display name. Use **Edit name** from the chat header (or **Edit chat name** on mobile) to rename a chat without changing its messages, memory, or per-chat settings. The renamed title is saved to that user's account and reappears after logout/login.
 
-`POST https://graph.instagram.com/{api-version}/{ig-account-id}/messages`
 
-with a body containing `recipient.id` and `message.text`.
+## User AI API settings
+Each logged-in user can add their own AI API from **AI API**. Supported providers: Google Gemini, OpenAI, and OpenAI-compatible/custom endpoints. Credentials are encrypted at rest with `APP_SECRET`. Do not commit `.env`.
 
-The recipient must be in a supported messaging flow; in particular, Meta states that conversations begin when an Instagram user sends a message to the professional account.
+## Incoming message input
+Use the visible **THEM / ME** selector above the composer. Select **THEM** to paste the other person's message and click **Add Them Message**; select **ME** to save your own outgoing message.
 
-## 3) Webhook
+## Ongoing conversation mode
+The AI prompt treats each chat as an ongoing conversation rather than an isolated reply. It can keep continuity across many turns, answer questions, suggest practical next steps, and ask a relevant follow-up only when it naturally moves the conversation forward. The app keeps a larger recent context window for long chats. Choose `Ongoing conversation`, `Concise`, or `Detailed` in Chat options.
 
-Callback URL:
+## Add your own API key
+After login, if the account has no saved AI credential, ChatPilot opens **AI API settings** and shows **Add your API key**. The provider selector supports Google Gemini, OpenAI, and OpenAI-compatible/custom endpoints. For Gemini, the panel includes a direct **Get your API key** link to Google AI Studio: https://aistudio.google.com/apikey. The key is sent only to the server and stored encrypted per user; it is never returned to the browser after saving.
 
-`https://YOUR_PUBLIC_HOST/webhook/instagram`
+## Sending generated replies
+The AI Message Studio includes **Send suggestion** so a generated reply can be saved into the current conversation as the user's outgoing message. Auto Reply remains OFF; nothing is sent automatically.
 
-Verification:
-
-`GET /webhook/instagram?hub.mode=subscribe&hub.verify_token=YOUR_TOKEN&hub.challenge=...`
-
-Set the same random token in `IG_VERIFY_TOKEN` and Meta's webhook settings.
-
-For real Instagram webhooks, your local port 4000 needs to be reachable by Meta over HTTPS (for example with a secure tunnel while developing).
-
-## 4) Privacy / bot behavior
-
-- Quiet hours are 02:00–07:00 Asia/Kolkata.
-- Replies use Hindi/Hinglish with occasional English, light flirting, and low emoji usage according to `.env`.
-- If directly asked whether AI is involved, the assistant does not claim to be human.
-- The project does not implement hidden personal-data extraction.
-- Keep API tokens out of the frontend and out of source control.
-
-## 5) Important production hardening
-
-Before public deployment, add HTTPS, authentication for the dashboard, durable database storage, rate limiting, retry/backoff, webhook replay protection, and Meta App Review/permissions appropriate to your account.
+## Chat naming
+- New Chat asks only for a chat name (for example, Ruhi).
+- Chat names can be edited later without changing messages, memory, or settings.
+- Participant ID is not part of the user-facing chat form.

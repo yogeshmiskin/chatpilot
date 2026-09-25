@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07090d"><title>ChatPilot — Conversation Studio</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div id="authView" class="center">
+  <div class="auth-card">
+    <div class="brand">CHAT<span>PILOT</span></div>
+    <p class="muted">Private multi-user conversation studio</p>
+    <div class="tabs"><button id="loginTab" class="active">Login</button><button id="registerTab">Create account</button></div>
+    <form id="authForm"><input id="email" type="email" autocomplete="email" placeholder="Email" required><input id="password" type="password" autocomplete="current-password" placeholder="Password (8+ characters)" minlength="8" required><button class="primary" type="submit" id="authBtn">Login</button></form>
+    <div id="authMsg" class="msg"></div>
+  </div>
+</div>
+<div id="appView" class="app hidden">
+  <aside class="sidebar">
+    <div class="topbar"><div class="brand small">CHAT<span>PILOT</span></div><button id="logoutBtn" class="ghost">Logout</button></div>
+    <div class="userbox"><div class="avatar" id="avatar">A</div><div class="userbox-text"><div id="userEmail"></div><div class="tiny">Private account workspace</div></div><button id="apiSettingsBtn" class="mini-action">AI API</button></div>
+    <button id="newChat" class="primary full">+ New chat</button><input id="search" class="search" placeholder="Search chats…"><div id="chatList" class="chat-list"></div>
+  </aside>
+  <main class="main">
+    <header class="chat-header"><div class="title-wrap"><button id="mobileBack" class="icon-btn mobile-only">‹</button><div><h2 id="chatTitle">Select a chat</h2><div id="chatSub" class="tiny"></div></div></div><div class="header-actions"><button id="mobileOptions" class="icon-btn mobile-only" aria-label="More options">•••</button><button id="renameChat" class="ghost">Edit name</button><button id="settingsBtn" class="ghost">Chat options</button><button id="deleteChat" class="danger ghost hidden">Delete</button></div></header>
+    <section id="messages" class="messages"><div class="empty">Create a chat, then add messages or files.</div></section>
+    <section class="composer">
+      <div class="intent-box">
+        <div class="intent-head"><span class="label">WHAT DO YOU WANT TO SAY?</span><button id="clearPrompt" class="mini-btn">Clear</button></div>
+        <textarea id="intentInput" placeholder="Example: bolna hai — 'chalo bahar चलते हैं'… AI isko natural, unique ready-to-send message mein banayega."></textarea><div class="intent-actions"><button id="sendIntent" class="ghost">Send as My Message</button><button id="generateIntent" class="primary">Generate from this text</button></div>
+      </div>
+      <div class="attach-row"><input id="fileInput" type="file" hidden><button id="attachBtn" class="icon-btn" title="Attach file">＋</button><div id="filePreview" class="file-preview hidden"></div></div>
+      <div class="direction-switch"><button id="themBtn" class="direction-tab">THEM</button><button id="meBtn" class="direction-tab active">ME</button><span id="directionHint" class="tiny">Paste their message here, then tap Add Them Message.</span></div><div class="send-row"><input id="messageInput" placeholder="Your message…"><button id="sendBtn" class="send-btn">Send</button></div>
+      <div class="cockpit"><div class="label">AI MESSAGE STUDIO</div><textarea id="suggestion" readonly placeholder="Generate a ready-to-send message from the chat context or your prompt…"></textarea><div class="actions"><button id="generate">Generate Reply</button><button id="generateMessage">Generate Message</button><button id="regenerate">Regenerate</button><button id="sendSuggestion" class="primary">Send suggestion</button><button id="copy">Copy</button><button id="clear">Clear</button></div><div id="source" class="tiny"></div></div>
+    </section>
+  </main>
+  <aside id="settingsPanel" class="settings-panel">
+    <div class="panel-head"><strong>Chat options</strong><button id="closeSettings" class="icon-btn">×</button></div>
+    <label>Chat name<input id="optName"></label>
+    <div class="two-col"><label>My mode<select id="optMyMode"><option>Boy</option><option>Girl</option><option>Neutral</option></select></label><label>Talking to<select id="optTalkingTo"><option>Boy</option><option>Girl</option><option>Neutral</option></select></label></div>
+    <label>Tone<select id="optTone"><option>Casual</option><option>Friendly</option><option>Funny</option><option>Caring</option><option>Flirty</option><option>Custom</option></select></label>
+    <label>Emoji level<select id="optEmoji"><option>Low</option><option>Normal</option><option>High</option></select></label><label>Conversation mode<select id="optResponseStyle"><option>Ongoing conversation</option><option>Concise</option><option>Detailed</option></select></label>
+    <div class="switch-row"><span>Flirting</span><input id="optFlirt" type="checkbox"></div>
+    <div class="switch-row"><span>Romantic</span><input id="optRomantic" type="checkbox"></div>
+    <div class="switch-row"><span>Mature</span><input id="optMature" type="checkbox"></div>
+    <label>AI chat prompt / style<textarea id="optInstructions" placeholder="Example: natural Hinglish, concise, direct solution first, light humor, no repetitive lines…"></textarea></label>
+    <div class="prompt-hint">This prompt is private to this chat and is combined with the built-in ChatPilot style.</div>
+    <button id="saveOptions" class="primary full">Save options</button><button id="renameChatMobile" class="ghost full">Edit chat name</button>
+  </aside>
+  <div id="apiPanel" class="api-panel" aria-hidden="true">
+    <div class="api-card">
+      <div class="panel-head"><strong>AI API settings</strong><button id="closeApi" class="icon-btn">×</button></div>
+      <div class="tiny api-note">Each account has its own API credentials. They are never shown to other users.</div><div class="api-hero"><strong>Add your API key</strong><span>Choose your provider, paste your key, then save it. Your key stays tied to this account.</span></div>
+      <label>Provider<select id="aiProvider"><option value="gemini">Google Gemini</option><option value="openai">OpenAI</option><option value="openai-compatible">OpenAI-compatible / other</option></select></label>
+      <label>API key<input id="aiKey" type="password" autocomplete="off" placeholder="Paste your API key"></label>
+      <label>Model<input id="aiModel" placeholder="Example: gemini-3.5-flash"></label><div class="api-help"><span id="apiHelpText">Google Gemini API key:</span> <a id="apiHelpLink" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Get your API key</a></div>
+      <label id="baseUrlWrap">Base URL<input id="aiBaseUrl" placeholder="https://api.example.com/v1"></label>
+      <div class="api-actions"><button id="saveApi" class="primary full">Save API</button><button id="removeApi" class="ghost full">Remove saved API</button></div>
+      <div id="apiStatus" class="tiny"></div>
+    </div>
+  </div>
+</div>
+<nav id="mobileNav" class="mobile-nav hidden"><button data-tab="chats">Chats</button><button data-tab="search">Search</button><button data-tab="new">＋</button><button data-tab="generate">Generate</button><button data-tab="options">Options</button></nav>
+<div id="mobileSearchSheet" class="sheet hidden"><div class="sheet-card"><div class="sheet-head"><strong>Search chats</strong><button class="icon-btn close-sheet">×</button></div><input id="mobileSearch" class="search" placeholder="Search chats…"></div></div>
+<script src="/app.js"></script>
+</body>
+</html>
